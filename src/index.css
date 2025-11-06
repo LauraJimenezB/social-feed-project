@@ -76,20 +76,16 @@ button:focus-visible {
   box-shadow: none !important;
 }
 
-.rt-TabsTriggerInner:hover,
-.rt-BaseTabListTriggerInner:hover {
-  box-shadow: none !important;
-  background: transparent !important;
-}
-
 .rt-TabsTriggerInner,
 .rt-BaseTabListTriggerInner {
   box-shadow: none !important;
   background: transparent !important;
 }
 
-.auth-tabs .rt-TabsTriggerInner:hover {
-  font-weight: 600 !important;
+:where(.rt-BaseTabListTrigger[data-state="active"], .rt-TabNavLink[data-active])
+  .rt-BaseTabListTriggerInner {
+  font-weight: 700 !important;
+  color: var(--gray-12) !important;
 }
 
 @media (prefers-color-scheme: light) {
