@@ -1,8 +1,10 @@
 import { Box, Container, Flex, Heading, Theme, Text } from "@radix-ui/themes";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthTabs, type Mode } from "../components/AuthTabs";
-import { AuthForm } from "../components/AuthForm";
+import { AuthTabGroup } from "../components/auth-page/AuthTabGroup";
+import { AuthForm } from "../components/auth-page/AuthForm";
+
+export type Mode = "signIn" | "signUp";
 
 const AuthPage = () => {
   const navigate = useNavigate();
@@ -27,21 +29,14 @@ const AuthPage = () => {
       radius="large"
     >
       <Container size="2" px={{ initial: "4", sm: "6" }}>
-        <Flex
-          align="center"
-          direction="column"
-          justify="center"
-          style={{ minHeight: "100svh" }}
-        >
-          <Box style={{ width: "100%", maxWidth: 560 }}>
-            <Box mb="4" style={{ textAlign: "center" }}>
-              <Heading size="8">Bienvenido a SocialFeed</Heading>
-              <Text as="p" size="4" color="gray" mt="2">
-                Inicia sesión o crea una cuenta para comenzar
-              </Text>
-            </Box>
+        <Flex justify="center" align="center" className="auth-page">
+          <Box className="auth-box">
+            <Heading size="8">Bienvenido a SocialFeed</Heading>
+            <Text as="p" size="4" color="gray" mt="2">
+              Inicia sesión o crea una cuenta para comenzar
+            </Text>
 
-            <AuthTabs mode={mode} onChange={handleTabChange} />
+            <AuthTabGroup mode={mode} onChange={handleTabChange} />
             <AuthForm mode={mode} />
           </Box>
         </Flex>
