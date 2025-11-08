@@ -65,7 +65,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    // Ask if session already exists, previous log in saved in localStorage
     supabase.auth.getSession().then(({ data }) => setSession(data.session));
+
+    //Check when auth status changes on sign-in, sign-up, sign-out, token refresh
+    // If not, status only on first render
     const { data: subscription } = supabase.auth.onAuthStateChange(
       (_, session) => setSession(session)
     );
@@ -77,9 +81,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const UserAuth = (): AuthContextType => {
+export const UseAuth = (): AuthContextType => {
   const ctx = useContext(AuthContext);
   if (!ctx)
-    throw new Error("UserAuth must be used within <AuthContextProvider>");
+    throw new Error("UseAuth must be used within <AuthContextProvider>");
   return ctx;
 };
