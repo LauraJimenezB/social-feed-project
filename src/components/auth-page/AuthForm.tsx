@@ -1,13 +1,12 @@
 import { Box, Flex, Button, Callout } from "@radix-ui/themes";
 import { useState } from "react";
-import * as colors from "@radix-ui/colors";
 import { useNavigate } from "react-router-dom";
 import {
   EnvelopeClosedIcon,
   LockClosedIcon,
   PersonIcon,
 } from "@radix-ui/react-icons";
-import { UserAuth } from "../context/AuthContext";
+import { UseAuth } from "../../context/AuthContext";
 import { AuthField } from "./AuthField";
 
 interface AuthFormProps {
@@ -15,14 +14,14 @@ interface AuthFormProps {
 }
 
 export const AuthForm = ({ mode }: AuthFormProps) => {
-  const { signUp, signIn } = UserAuth();
+  const { signUp, signIn } = UseAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    confirm: "",
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,14 +33,15 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
     e.preventDefault();
     setError("");
 
-    const { name, email, password, confirm } = form;
+    const { name, email, password, confirmPassword } = form;
 
     // Validation
     if (mode === "signUp") {
       if (!email || !password || !name)
         return setError("Todos los campos son obligatorios");
 
-      if (password !== confirm) return setError("Las contraseñas no coinciden");
+      if (password !== confirmPassword)
+        return setError("Las contraseñas no coinciden");
     } else if (!email || !password) {
       return setError("Por favor ingresa tu email y contraseña");
     }
@@ -67,9 +67,9 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
   };
 
   return (
-    <Box asChild style={{ minHeight: 420 }}>
+    <Box asChild className="form-box">
       <form onSubmit={handleSubmit}>
-        <Flex direction="column" gap="3" align="center">
+        <Flex className="form-fields-container">
           {mode === "signUp" && (
             <AuthField
               label="Nombre"
@@ -102,8 +102,8 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
             <AuthField
               label="Confirmar Contraseña"
               icon={<LockClosedIcon />}
-              value={form.confirm}
-              onChange={(value) => handleChange("confirm", value)}
+              value={form.confirmPassword}
+              onChange={(value) => handleChange("confirmPassword", value)}
               placeholder="•••••••"
               type="password"
             />
@@ -116,15 +116,10 @@ export const AuthForm = ({ mode }: AuthFormProps) => {
           )}
 
           <Button
+            className="submit-button"
             size="3"
             type="submit"
             disabled={loading}
-            style={{
-              width: "100%",
-              backgroundColor: colors.gray.gray12,
-              color: colors.gray.gray1,
-              fontWeight: 600,
-            }}
           >
             {mode === "signIn" ? "Iniciar Sesión" : "Crear Cuenta"}
           </Button>

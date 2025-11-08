@@ -1,5 +1,4 @@
 import { Box, Text, TextField } from "@radix-ui/themes";
-import * as colors from "@radix-ui/colors";
 import type { ReactNode } from "react";
 
 interface AuthFieldProps {
@@ -19,7 +18,7 @@ export const AuthField = ({
   type,
   icon,
 }: AuthFieldProps) => (
-  <Box style={{ width: "100%", textAlign: "left" }}>
+  <Box className="auth-field">
     <Text as="label" size="3" weight="medium">
       {label}
     </Text>
@@ -32,11 +31,6 @@ export const AuthField = ({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       type={type}
-      style={{
-        backgroundColor: colors.gray.gray2,
-        borderColor: colors.gray.gray6,
-        color: colors.gray.gray12,
-      }}
     >
       {icon && <TextField.Slot>{icon}</TextField.Slot>}
     </TextField.Root>
