@@ -93,11 +93,21 @@
   background-color: var(--gray-11);
 }
 
+.post-form-container {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
 .form-field {
   display: flex !important;
   flex-direction: column;
   text-align: left;
   margin-bottom: 15px;
+}
+
+.form-message {
+  color: var(--red-10);
+  font-size: 0.85rem;
 }
 
 @keyframes logo-spin {
