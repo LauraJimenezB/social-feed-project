@@ -1,9 +1,8 @@
-import { Box, Container, Flex, Theme } from "@radix-ui/themes";
+import { Box, Flex } from "@radix-ui/themes";
 
 import WelcomeBanner from "../components/home-page/WelcomeBanner";
 import Post, { type PostType } from "../components/home-page/post/Post";
-import Header from "../components/home-page/Header";
-import SearchBar from "../components/home-page/SearchBar";
+import PageLayout from "../components/layout/PageLayout";
 
 const MOCK_POSTS: PostType[] = [
   {
@@ -40,47 +39,15 @@ const MOCK_POSTS: PostType[] = [
 
 export default function Home() {
   return (
-    <Theme
-      appearance="light"
-      accentColor="gray"
-      grayColor="slate"
-      radius="large"
-    >
-      <Box
-        style={{
-          position: "fixed",
-          inset: 0, // top:0 right:0 bottom:0 left:0
-          display: "flex",
-          flexDirection: "column",
-          background: "#fff",
-        }}
-      >
-        <Header />
-        <Box
-          asChild
-          style={{
-            flex: 1,
-            overflowY: "auto",
-            overflowX: "hidden",
-          }}
-        >
-          <main>
-            <Container size="3">
-              <Flex direction="column" gap="4" my="4">
-                <SearchBar />
-                <WelcomeBanner />
-                <Box asChild>
-                  <Flex direction="column" gap="5">
-                    {MOCK_POSTS.map((p) => (
-                      <Post key={p.id} post={p} />
-                    ))}
-                  </Flex>
-                </Box>
-              </Flex>
-            </Container>
-          </main>
-        </Box>
+    <PageLayout showSearch>
+      <WelcomeBanner />
+      <Box asChild>
+        <Flex direction="column" gap="5">
+          {MOCK_POSTS.map((p) => (
+            <Post key={p.id} post={p} />
+          ))}
+        </Flex>
       </Box>
-    </Theme>
+    </PageLayout>
   );
 }
