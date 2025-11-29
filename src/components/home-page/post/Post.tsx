@@ -13,21 +13,62 @@ import {
   HeartIcon,
   ChatBubbleIcon,
   Share2Icon,
+  HeartFilledIcon,
 } from "@radix-ui/react-icons";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { UseAuth } from "../../../context/AuthContext";
+import { fetchLikes, likePost, unlikePost, type Likes } from "../../../api";
 
 export type PostType = {
   id: string;
-  author: { handle: string; avatarUrl: string };
-  timeAgo: string;
-  images: string[];
-  likes: number;
-  caption: string;
-  hashtags: string[];
-  commentsCount: number;
+  user_name: string;
+  created_at: string;
+  image_url: string;
+  likes: string[];
+  description: string;
 };
 
 export default function PostCard({ post }: { post: PostType }) {
-  const mainImage = post.images[0];
+  const mainImage = post.image_url;
+  const [likes, setLikes] = useState<Likes>([]);
+
+  const { session } = UseAuth();
+
+  const userLikesPost = useMemo(
+    () => likes?.find((like) => like.user_id === session?.user.id),
+    [likes, session]
+  );
+
+  const loadLikes = useCallback(async () => {
+    const data = await fetchLikes(post.id);
+    setLikes(data);
+  }, [post.id]);
+
+  useEffect(() => {
+    loadLikes();
+  }, [loadLikes]);
+
+  const toggleLike = async () => {
+    if (!session) return;
+
+    try {
+      if (userLikesPost) {
+        await unlikePost(userLikesPost.id);
+      } else {
+        await likePost(session.user.id, post.id);
+      }
+
+      loadLikes();
+    } catch (error) {
+      console.error("Error toggling like:", error);
+    }
+  };
+
+  const formattedDate = new Date(post.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
   return (
     <Card size="3" variant="surface">
@@ -35,16 +76,12 @@ export default function PostCard({ post }: { post: PostType }) {
       <Flex align="center" justify="between" px="3" py="2">
         <Flex align="center" gap="3">
           <Avatar
-            src={post.author.avatarUrl}
-            fallback={post.author.handle[0].toUpperCase()}
+            fallback={post?.user_name?.[0].toUpperCase()}
             size="3"
             radius="full"
           />
           <Box>
-            <Text weight="medium">{post.author.handle}</Text>
-            <Text as="div" size="1" color="gray">
-              {post.timeAgo}
-            </Text>
+            <Text weight="medium">{post.user_name}</Text>
           </Box>
         </Flex>
         <IconButton variant="ghost" radius="full" aria-label="Más opciones">
@@ -76,8 +113,13 @@ export default function PostCard({ post }: { post: PostType }) {
 
       {/* Actions */}
       <Flex align="center" gap="3" px="3" py="1">
-        <IconButton variant="ghost" radius="full" aria-label="Me gusta">
-          <HeartIcon />
+        <IconButton
+          variant="ghost"
+          radius="full"
+          aria-label="Me gusta"
+          onClick={toggleLike}
+        >
+          {userLikesPost ? <HeartFilledIcon /> : <HeartIcon />}
         </IconButton>
         <IconButton variant="ghost" radius="full" aria-label="Comentar">
           <ChatBubbleIcon />
@@ -89,25 +131,12 @@ export default function PostCard({ post }: { post: PostType }) {
 
       {/* Meta */}
       <Box px="3" pb="3">
-        <Text weight="bold">{post.likes} me gusta</Text>
+        <Text weight="bold">{likes.length} me gusta</Text>
         <Text as="p" mt="1">
-          <Text weight="bold">{post.author.handle}</Text> {post.caption}
+          {post.description}
         </Text>
-
-        <Box mt="2" style={{ lineHeight: 1.6 }}>
-          {post.hashtags.map((h) => (
-            <RLink key={h} href="#" mr="3" underline="always">
-              #{h}
-            </RLink>
-          ))}
-        </Box>
-
-        <Text
-          //as="button"
-          style={{ all: "unset", color: "var(--gray-11)", cursor: "pointer" }}
-          mt="2"
-        >
-          Ver los {post.commentsCount} comentarios
+        <Text as="div" size="1" color="gray">
+          {formattedDate}
         </Text>
       </Box>
     </Card>

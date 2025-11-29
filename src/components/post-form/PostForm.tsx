@@ -4,6 +4,7 @@ import { useState } from "react";
 import { UseAuth } from "../../context/AuthContext";
 import { supabase } from "../../../supabaseClient";
 import { FormField } from "./FormField";
+import { useNavigate } from "react-router-dom";
 
 export default function PostForm() {
   const [description, setDescription] = useState("");
@@ -14,6 +15,7 @@ export default function PostForm() {
   const [loading, setLoading] = useState(false);
 
   const { session } = UseAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +48,7 @@ export default function PostForm() {
       // ---- Insert post ----
       const { error: insertError } = await supabase.from("posts").insert({
         user_id: session.user.id,
+        user_name: session.user.user_metadata.name,
         description,
         image_url: urlData.publicUrl,
       });
@@ -59,6 +62,8 @@ export default function PostForm() {
       setDescription("");
       setImageFile(null);
       setFileKey((k) => k + 1);
+
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("Ocurrió un error");
